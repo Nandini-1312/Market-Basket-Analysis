@@ -1,0 +1,105 @@
+---
+title: "Market Basket Analysis"
+output:
+  word_document: default
+  html_document: default
+  Author: "Nandini Ethirajulu"
+date: "2024-06-13"
+---
+
+
+```{r}
+# Data Description
+# The dataset (marketbasket.xlsx) provided by RM's Information Technology group contains purchases by 1000 customers over a one-week period. Each customer's purchase behavior is recorded with variables indicating the type of bread (wheat, white, or none), jelly (grape, strawberry, or none), and peanut butter (creamy, natural, or none).
+```
+
+
+```{r}
+#A) Creating a Binary Transaction Matrix The R script reads the dataset, preprocesses it by converting variables to factors, and creates a binary transaction matrix
+
+
+#Read the data
+#install.packages("readxl")
+library(readxl)
+
+setwd("C:/Users/nandi/Documents/Personal/Academics/Projects/Market Basket Analysis") 
+
+
+marketbasket_dats <- read_excel("marketbasket.xlsx", sheet = "Data")
+
+
+###########Preprocessing########
+#Renaming the column name from "Peanut Butter" to "Peanut_Butter"
+colnames(marketbasket_dats)[3]<- "Peanut_Butter"
+
+#converting the column values to factors
+marketbasket_dats$Bread <- as.factor(marketbasket_dats$Bread)
+marketbasket_dats$Jelly <- as.factor(marketbasket_dats$Jelly)
+marketbasket_dats$Peanut_Butter <- as.factor(marketbasket_dats$Peanut_Butter)
+
+
+######### Creating a Binary Transactional Matrix ##########
+
+marketbasket_transaction_matrix <- as.matrix(marketbasket_dats)
+
+marketbasket_transaction_matrix[marketbasket_transaction_matrix != "none"] <- 1
+marketbasket_transaction_matrix[marketbasket_transaction_matrix == "none"] <- 0
+
+
+##Binary Transaction Matrix created
+head(marketbasket_transaction_matrix)
+
+
+######### Writing the matrix completely to a tab  delimited text file  #########
+
+write.table(marketbasket_transaction_matrix, sep = "\t", file = "marketbasket_binary_transaction_matrix.txt", 
+            row.names = FALSE, 
+            col.names = colnames(marketbasket_transaction_matrix))
+```
+
+```{r}
+
+# B) Initial Study and Recommendations
+#initial study of the data to get a better understanding of RM customer behavior about these three products
+
+
+library("arules")
+
+
+#converting data into transactions
+marketbasket_transactions <- as(marketbasket_dats, "transactions")
+
+##Applying apriori algorithm to extract the association rules
+
+marketbasket_rules  <- apriori(marketbasket_transactions, parameter = list(support = 0.1, confidence = 0.6))
+
+
+
+#Apriori rules sorted by lift percentage and filtered top 10 ranking associations
+
+
+inspect(head(sort(marketbasket_rules, by = "lift"), n = 10))
+##All the top 10 rankings have lift value greater than 1 indicating that the products in the lhs increases the probability of item purchase in the rhs.
+
+
+######## Analysis and advise #########
+
+
+# From the top 10 rankings of association rules of the three product combinations, it is  recommended to promote the item combinations of Jelly - grape, Peanut_Butter - creamy and white bread, as it is expected to more prominently increase the sales and frequently bought by the customers.
+
+#Combinations of white bread and creamy peanut butter are most likely to increase the purchase of the grape jelly. hence it is suggested to align together in the store to increase the sales and purchase frequency.
+
+
+#In addition to the above, some customers are also interested only in buying jelly-grape along with white breads, without purchasing any type of peanut butter. So it is recommended to apply a combo or bundling options for these two products to elevate the customer's interests and choices.
+
+#One other important transactions are creamy peanut butter purchases, which are increasing the customer's likeliness to purchase white bread most often.
+
+
+##In scenarios where customer's did not purchase any jelly or peanut butter, they also avoided the pourchase of white bread. Similarly, even when they were not buying breads or jellys, they have ignored the purchase of peanut butter.
+
+
+##Finally based on our initial analysis we recommend David to implement thoughtful promotions, offers or bundling options for the above combination items in the product list to increase the sales.
+
+
+```
+
