@@ -8,7 +8,9 @@ This project conducts a market basket analysis of customer purchase behavior usi
 **Project Objectives**
 
 •	Create a binary transaction matrix from the transactional data.
+
 •	Identify frequent itemset and association rules among bread, jelly, and peanut butter.
+
 •	Provide recommendations to RM based on the insights derived from the analysis.
 
 
@@ -21,25 +23,31 @@ The dataset (marketbasket.xlsx) provided by RM's Information Technology group co
 
 A) Creating a Binary Transaction Matrix
 The R script reads the dataset, preprocesses it by converting variables to factors, and creates a binary transaction matrix where:
+
 •	1 indicates the purchase of a product.
+
 •	0 indicates no purchase.
+
 The resulting matrix is then saved as a tab-delimited text file (marketbasket_binary_transaction_matrix.txt).
 
 B) Initial Study and Recommendations
   1.	Market Basket Analysis
-     
-  o	The arules package is utilized to convert the preprocessed data into transactions.
-  o	The Apriori algorithm is applied to mine association rules with a minimum support of 0.1 and minimum confidence of 0.6.
-  o	Association rules are ranked by lift to identify significant product associations.
+       
+    o	The arules package is utilized to convert the preprocessed data into transactions.
+    
+    o	The Apriori algorithm is applied to mine association rules with a minimum support of 0.1 and minimum confidence of 0.6.
+    
+    o	Association rules are ranked by lift to identify significant product associations.
   
   2.	Recommendations
      
-  o	Based on the top association rules, recommendations are provided to RM. By understanding which products are frequently purchased together, RM can strategically optimize its sales strategies and     enhance customer satisfaction.
+    o	Based on the top association rules, recommendations are provided to RM. By understanding which products are frequently purchased together, RM can strategically optimize its sales strategies         and enhance customer satisfaction.
 
 
 Prerequisites
 
 •	R programming language
+
 •	Required R packages: readxl, arules
 
 
